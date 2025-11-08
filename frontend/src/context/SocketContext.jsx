@@ -21,7 +21,8 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (isAuthenticated && user) {
       // Initialize socket connection with better error handling
-      const newSocket = io('http://localhost:5000', {
+      const socketUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+      const newSocket = io(socketUrl, {
         transports: ['websocket', 'polling'],
         timeout: 20000,
         retries: 3,

@@ -1,11 +1,17 @@
 import axios from 'axios';
 
+// Use environment variable or fallback to localhost for development
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json'
   }
 });
+
+// Export API_URL for use in other files
+export { API_URL };
 
 // Request interceptor - Add token to requests
 api.interceptors.request.use(

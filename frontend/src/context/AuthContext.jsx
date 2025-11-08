@@ -23,8 +23,9 @@ export const AuthProvider = ({ children }) => {
     } else {
       delete axios.defaults.headers.common['Authorization'];
     }
-    // Set base URL for axios
-    axios.defaults.baseURL = 'http://localhost:5000';
+    // Set base URL for axios using environment variable
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    axios.defaults.baseURL = API_BASE.replace('/api', '');
   }, [token]);
 
   // Check if user is authenticated on app load
