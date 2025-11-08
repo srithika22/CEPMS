@@ -12,6 +12,10 @@ import { toast } from 'react-hot-toast';
 
 const EnhancedAdminDashboard = () => {
   const { user } = useAuth();
+  
+  // API URL for all requests
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  
   const [events, setEvents] = useState([]);
   const [users, setUsers] = useState([]);
   const [registrations, setRegistrations] = useState([]);
@@ -52,11 +56,11 @@ const EnhancedAdminDashboard = () => {
       };
 
       // Fetch admin dashboard data which includes stats and overview data
-      const dashboardRes = await axios.get('http://localhost:5000/api/dashboard/admin', config);
+      const dashboardRes = await axios.get(`${API_URL}/dashboard/admin`, config);
       const dashboardData = dashboardRes.data.data || dashboardRes.data;
 
       // Fetch all events separately using admin endpoint (without pagination limit)
-      const eventsRes = await axios.get('http://localhost:5000/api/events/admin?limit=1000', config);
+      const eventsRes = await axios.get(`${API_URL}/events/admin?limit=1000`, config);
       const allEvents = eventsRes.data.data?.events || eventsRes.data.events || eventsRes.data.data || eventsRes.data || [];
 
       console.log('Admin Dashboard - Fetched events:', allEvents.length, 'events');
@@ -87,7 +91,7 @@ const EnhancedAdminDashboard = () => {
       // Calculate average attendance
       let avgAttendance = 0;
       try {
-        const attendanceRes = await axios.get('http://localhost:5000/api/attendance/', config);
+        const attendanceRes = await axios.get(`${API_URL}/attendance/`, config);
         const attendanceList = attendanceRes.data.data || attendanceRes.data || [];
         setAttendanceData(Array.isArray(attendanceList) ? attendanceList : []);
         
@@ -158,7 +162,7 @@ const EnhancedAdminDashboard = () => {
 
       console.log('Creating event with payload:', eventPayload);
       
-      const response = await axios.post('http://localhost:5000/api/events', eventPayload, {
+      const response = await axios.post(`${API_URL}/events`, eventPayload, {
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -206,7 +210,7 @@ const EnhancedAdminDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.put(
-        `http://localhost:5000/api/events/${editingEvent._id}`,
+        `${API_URL}/events/${editingEvent._id}`,
         eventData,
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -234,7 +238,7 @@ const EnhancedAdminDashboard = () => {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/events/${event._id}`, {
+      await axios.delete(`${API_URL}/events/${event._id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -260,7 +264,7 @@ const EnhancedAdminDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.patch(
-        `http://localhost:5000/api/events/${event._id}/approve`,
+        `${API_URL}/events/${event._id}/approve`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -293,7 +297,7 @@ const EnhancedAdminDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.patch(
-        `http://localhost:5000/api/events/${event._id}/reject`,
+        `${API_URL}/events/${event._id}/reject`,
         { reason },
         {
           headers: { Authorization: `Bearer ${token}` }

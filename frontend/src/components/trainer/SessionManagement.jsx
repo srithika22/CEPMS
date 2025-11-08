@@ -4,6 +4,8 @@ import axios from 'axios';
 import '../../styles/dashboard.css';
 
 const SessionManagement = ({ onClose, trainerMode = false, facultyMode = false }) => {
+  // API URL from environment variable
+  const API_URL = import.meta.env.VITE_API_URL || '${API_URL}';
   const { user } = useAuth();
   const [sessions, setSessions] = useState([]);
   const [events, setEvents] = useState([]);
@@ -47,7 +49,7 @@ const SessionManagement = ({ onClose, trainerMode = false, facultyMode = false }
       };
       
       console.log('Fetching events for session management...');
-      const response = await axios.get('http://localhost:5000/api/events', config);
+      const response = await axios.get(`${API_URL}/events`, config);
       console.log('Events API response:', response.data);
       
       // Handle different response formats
@@ -90,7 +92,7 @@ const SessionManagement = ({ onClose, trainerMode = false, facultyMode = false }
       
       // If a specific event is selected, fetch sessions for that event
       if (selectedEvent) {
-        const response = await axios.get(`http://localhost:5000/api/sessions/event/${selectedEvent}`, config);
+        const response = await axios.get(`${API_URL}/sessions/event/${selectedEvent}`, config);
         console.log('Sessions API response for event:', response.data);
         
         // Handle different response formats
@@ -112,7 +114,7 @@ const SessionManagement = ({ onClose, trainerMode = false, facultyMode = false }
         
         for (const event of userEvents) {
           try {
-            const response = await axios.get(`http://localhost:5000/api/sessions/event/${event._id}`, config);
+            const response = await axios.get(`${API_URL}/sessions/event/${event._id}`, config);
             console.log(`Sessions for event ${event._id}:`, response.data);
             
             let sessionsData = [];
@@ -146,7 +148,7 @@ const SessionManagement = ({ onClose, trainerMode = false, facultyMode = false }
       const config = {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       };
-      const response = await axios.get('http://localhost:5000/api/events', config);
+      const response = await axios.get('${API_URL}/events', config);
       console.log('User events response:', response.data);
       
       // Handle different response formats
@@ -263,7 +265,7 @@ const SessionManagement = ({ onClose, trainerMode = false, facultyMode = false }
       };
 
       console.log('Creating session with data:', sessionData);
-      const response = await axios.post('http://localhost:5000/api/sessions', sessionData, config);
+      const response = await axios.post('${API_URL}/sessions', sessionData, config);
       console.log('Create session response:', response.data);
       console.log('Create session response:', response.data);
       
@@ -343,7 +345,7 @@ const SessionManagement = ({ onClose, trainerMode = false, facultyMode = false }
       };
 
       console.log('Updating session with data:', sessionData);
-      const response = await axios.put(`http://localhost:5000/api/sessions/${editingSession._id}`, sessionData, config);
+      const response = await axios.put(`${API_URL}/sessions/${editingSession._id}`, sessionData, config);
       console.log('Update session response:', response.data);
       
       setShowCreateSession(false);
@@ -381,7 +383,7 @@ const SessionManagement = ({ onClose, trainerMode = false, facultyMode = false }
         };
 
         console.log('Deleting session:', sessionId);
-        const response = await axios.delete(`http://localhost:5000/api/sessions/${sessionId}`, config);
+        const response = await axios.delete(`${API_URL}/sessions/${sessionId}`, config);
         console.log('Delete session response:', response.data);
         
         // Refresh sessions list

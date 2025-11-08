@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const APITestPanel = () => {
+  // API URL from environment variable
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  
   const [testResults, setTestResults] = useState(null);
   const [testing, setTesting] = useState(false);
   const [expandedTest, setExpandedTest] = useState(null);
@@ -26,10 +29,10 @@ const APITestPanel = () => {
         let response;
         switch (method.toLowerCase()) {
           case 'get':
-            response = await axios.get(`http://localhost:5000/api${url}`, config);
+            response = await axios.get(`${API_URL}${url}`, config);
             break;
           case 'post':
-            response = await axios.post(`http://localhost:5000/api${url}`, {}, config);
+            response = await axios.post(`${API_URL}${url}`, {}, config);
             break;
           default:
             throw new Error(`Unsupported method: ${method}`);

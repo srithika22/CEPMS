@@ -85,7 +85,7 @@ const ComprehensiveEventForm = ({ event = null, onSubmit, onSuccess, onCancel })
     const fetchTrainers = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:5000/api/users/trainers', {
+        const response = await fetch('${API_URL}/users/trainers', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -243,8 +243,8 @@ const ComprehensiveEventForm = ({ event = null, onSubmit, onSuccess, onCancel })
       // Fallback to built-in API call if no onSubmit prop
       const token = localStorage.getItem('token');
       const url = event 
-        ? `http://localhost:5000/api/events/${event._id}`
-        : 'http://localhost:5000/api/events';
+        ? `${API_URL}/events/${event._id}`
+        : '${API_URL}/events';
       
       const method = event ? 'PUT' : 'POST';
       

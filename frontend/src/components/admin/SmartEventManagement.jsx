@@ -3,6 +3,9 @@ import axios from 'axios';
 import '../../styles/smartEventManagement.css';
 
 const SmartEventManagement = () => {
+  // API URL from environment variable
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -72,14 +75,14 @@ const SmartEventManagement = () => {
       let response;
       if (token) {
         try {
-          response = await axios.get('http://localhost:5000/api/events/admin', config);
+          response = await axios.get('${API_URL}/events/admin', config);
           console.log('Admin endpoint successful');
         } catch (adminError) {
           console.warn('Admin endpoint failed, trying public endpoint:', adminError.message);
-          response = await axios.get('http://localhost:5000/api/events', { params: config.params });
+          response = await axios.get('${API_URL}/events', { params: config.params });
         }
       } else {
-        response = await axios.get('http://localhost:5000/api/events', config);
+        response = await axios.get('${API_URL}/events', config);
       }
       
       console.log('API Response status:', response.status);
@@ -118,7 +121,7 @@ const SmartEventManagement = () => {
       // Try public detail first; on 404 (e.g., pending events), fall back to local list item
       let eventData = null;
       try {
-        const eventRes = await axios.get(`http://localhost:5000/api/events/${eventId}`, headers);
+        const eventRes = await axios.get(`${API_URL}/events/${eventId}`, headers);
         eventData = eventRes.data?.data || eventRes.data;
       } catch (evtErr) {
         if (evtErr?.response?.status === 404) {
@@ -139,7 +142,7 @@ const SmartEventManagement = () => {
       // Try to get registrations, but don't fail if endpoint doesn't exist
       let registrationsRes;
       try {
-        registrationsRes = await axios.get(`http://localhost:5000/api/registrations/event/${eventId}`, headers);
+        registrationsRes = await axios.get(`${API_URL}/registrations/event/${eventId}`, headers);
       } catch (regError) {
         console.warn('Registrations endpoint failed, using empty data:', regError.message);
         registrationsRes = { data: [] };
@@ -184,7 +187,7 @@ const SmartEventManagement = () => {
 
       // Fetch attendance via filtered endpoint and normalize for UI
       try {
-        const attendanceRes = await axios.get(`http://localhost:5000/api/attendance/event/${eventId}/filtered`, headers);
+        const attendanceRes = await axios.get(`${API_URL}/attendance/event/${eventId}/filtered`, headers);
         const raw = attendanceRes.data?.data?.attendance
           || attendanceRes.data?.attendance
           || attendanceRes.data
@@ -216,7 +219,7 @@ const SmartEventManagement = () => {
 
       // Fetch real analytics data
       try {
-        const analyticsRes = await axios.get(`http://localhost:5000/api/events/${eventId}/analytics/detailed`, headers);
+        const analyticsRes = await axios.get(`${API_URL}/events/${eventId}/analytics/detailed`, headers);
         const analyticsData = analyticsRes.data?.data || analyticsRes.data || {};
         setAnalytics({
           overview: analyticsData.overview || {
@@ -291,7 +294,7 @@ const SmartEventManagement = () => {
       try {
         const token = localStorage.getItem('token');
         const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-        await axios.delete(`http://localhost:5000/api/events/${eventId}`, headers);
+        await axios.delete(`${API_URL}/events/${eventId}`, headers);
         fetchEvents();
         if (selectedEvent?._id === eventId) {
           setSelectedEvent(null);
@@ -308,7 +311,7 @@ const SmartEventManagement = () => {
     try {
       const token = localStorage.getItem('token');
       const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-      await axios.patch(`http://localhost:5000/api/events/${eventId}/approve`, {}, headers);
+      await axios.patch(`${API_URL}/events/${eventId}/approve`, {}, headers);
       fetchEvents();
       setError('');
     } catch (error) {
@@ -322,7 +325,7 @@ const SmartEventManagement = () => {
       try {
         const token = localStorage.getItem('token');
         const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-        await axios.patch(`http://localhost:5000/api/events/${eventId}/reject`, {}, headers);
+        await axios.patch(`${API_URL}/events/${eventId}/reject`, {}, headers);
         fetchEvents();
         setError('');
       } catch (error) {
@@ -336,7 +339,7 @@ const SmartEventManagement = () => {
     try {
       const token = localStorage.getItem('token');
       const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-      await axios.patch(`http://localhost:5000/api/events/${eventId}/toggle-registration`, {}, headers);
+      await axios.patch(`${API_URL}/events/${eventId}/toggle-registration`, {}, headers);
       fetchEvents();
       if (selectedEvent?._id === eventId) {
         fetchEventDetails(eventId);
@@ -412,7 +415,7 @@ const SmartEventManagement = () => {
       const token = localStorage.getItem('token');
       const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
       
-      const response = await axios.get(`http://localhost:5000/api/registrations/event/${selectedEvent._id}/export`, headers);
+      const response = await axios.get(`${API_URL}/registrations/event/${selectedEvent._id}/export`, headers);
       const exportData = response.data?.data || response.data || [];
       
       // Convert to CSV
@@ -429,7 +432,7 @@ const SmartEventManagement = () => {
       const token = localStorage.getItem('token');
       const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
       
-      const response = await axios.get(`http://localhost:5000/api/attendance/event/${selectedEvent._id}/export`, headers);
+      const response = await axios.get(`${API_URL}/attendance/event/${selectedEvent._id}/export`, headers);
       const exportData = response.data?.data || response.data || [];
       
       // Convert to CSV
@@ -474,7 +477,7 @@ const SmartEventManagement = () => {
       const token = localStorage.getItem('token');
       const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
       
-      await axios.post(`http://localhost:5000/api/sessions`, {
+      await axios.post(`${API_URL}/sessions`, {
         ...sessionData,
         eventId: selectedEvent._id
       }, headers);
@@ -491,7 +494,7 @@ const SmartEventManagement = () => {
       const token = localStorage.getItem('token');
       const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
       
-      await axios.put(`http://localhost:5000/api/sessions/${sessionId}`, sessionData, headers);
+      await axios.put(`${API_URL}/sessions/${sessionId}`, sessionData, headers);
       fetchEventDetails(selectedEvent._id);
     } catch (error) {
       console.error('Error updating session:', error);
@@ -505,7 +508,7 @@ const SmartEventManagement = () => {
         const token = localStorage.getItem('token');
         const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
         
-        await axios.delete(`http://localhost:5000/api/sessions/${sessionId}`, headers);
+        await axios.delete(`${API_URL}/sessions/${sessionId}`, headers);
         fetchEventDetails(selectedEvent._id);
       } catch (error) {
         console.error('Error deleting session:', error);

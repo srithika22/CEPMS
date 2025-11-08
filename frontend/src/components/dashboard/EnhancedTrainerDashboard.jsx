@@ -146,13 +146,16 @@ const EnhancedTrainerDashboard = () => {
         headers: { Authorization: `Bearer ${token}` }
       };
 
+      // API URL from environment variable
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      
       // Fetch trainer dashboard stats
-      const dashboardRes = await axios.get('http://localhost:5000/api/dashboard/trainer', config);
+      const dashboardRes = await axios.get(`${API_URL}/dashboard/trainer`, config);
       const dashboardData = dashboardRes.data.data || dashboardRes.data;
 
       // Fetch all events separately (approved events only, increase limit to get all events)
       console.log('🔍 Trainer Dashboard - Fetching events...');
-      const eventsRes = await axios.get('http://localhost:5000/api/events?limit=1000', config);
+      const eventsRes = await axios.get(`${API_URL}/events?limit=1000`, config);
       
       console.log('📦 Trainer Dashboard - Full API Response:', eventsRes.data);
       
@@ -223,7 +226,7 @@ const EnhancedTrainerDashboard = () => {
       };
 
       // Fetch all events
-      const eventsRes = await axios.get('http://localhost:5000/api/events', config);
+      const eventsRes = await axios.get(`${API_URL}/events`, config);
       const allEvents = eventsRes.data.data || eventsRes.data;
       setEvents(allEvents);
 
@@ -242,7 +245,7 @@ const EnhancedTrainerDashboard = () => {
       // Fetch sessions for each trainer event
       for (const eventId of trainerEventIds) {
         try {
-          const sessionsRes = await axios.get(`http://localhost:5000/api/sessions/event/${eventId}`, config);
+          const sessionsRes = await axios.get(`${API_URL}/sessions/event/${eventId}`, config);
           const eventSessions = sessionsRes.data.data || sessionsRes.data;
           trainerSessions = [...trainerSessions, ...eventSessions];
         } catch (error) {
@@ -275,7 +278,7 @@ const EnhancedTrainerDashboard = () => {
       let allRegistrations = [];
       for (const event of trainerEvents) {
         try {
-          const regRes = await axios.get(`http://localhost:5000/api/registrations/event/${event._id}`, config);
+          const regRes = await axios.get(`${API_URL}/registrations/event/${event._id}`, config);
           const eventRegistrations = regRes.data.data || regRes.data || [];
           allRegistrations = [...allRegistrations, ...eventRegistrations];
         } catch (error) {
@@ -308,7 +311,7 @@ const EnhancedTrainerDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.patch(
-        `http://localhost:5000/api/users/${user._id}/availability`,
+        `${API_URL}/users/${user._id}/availability`,
         { availability },
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -334,7 +337,7 @@ const EnhancedTrainerDashboard = () => {
         markedAt: new Date()
       };
 
-      await axios.post('http://localhost:5000/api/attendance', attendanceData, {
+      await axios.post(`${API_URL}/attendance`, attendanceData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

@@ -230,8 +230,9 @@ const EnhancedStudentDashboard = () => {
 
       try {
         // Fetch all available events (approved events)
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
         console.log('📡 Student Dashboard - Fetching events from /api/events...');
-        const eventsRes = await axios.get('http://localhost:5000/api/events?limit=1000', config);
+        const eventsRes = await axios.get(`${API_URL}/events?limit=1000`, config);
         
         console.log('📦 Student Dashboard - Events API Response:', eventsRes.data);
         
@@ -268,7 +269,7 @@ const EnhancedStudentDashboard = () => {
 
       // Try to fetch other data but don't fail if it doesn't work
       try {
-        const registrationsRes = await axios.get('http://localhost:5000/api/registrations/my-registrations', config);
+        const registrationsRes = await axios.get(`${API_URL}/registrations/my-registrations`, config);
         const userRegistrations = Array.isArray(registrationsRes.data.data) ? registrationsRes.data.data : [];
         setMyRegistrations(userRegistrations);
         
@@ -282,7 +283,7 @@ const EnhancedStudentDashboard = () => {
       }
 
       try {
-        const certificatesRes = await axios.get('http://localhost:5000/api/certificates/user/my-certificates', config);
+        const certificatesRes = await axios.get(`${API_URL}/certificates/user/my-certificates`, config);
         const userCertificates = Array.isArray(certificatesRes.data.data) ? certificatesRes.data.data : [];
         setCertificates(userCertificates);
         
@@ -398,7 +399,7 @@ const EnhancedStudentDashboard = () => {
         participantDetails: user.student || user.faculty || user.trainer
       };
 
-      const response = await axios.post('http://localhost:5000/api/registrations', registrationData, {
+      const response = await axios.post(`${API_URL}/registrations`, registrationData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -437,7 +438,7 @@ const EnhancedStudentDashboard = () => {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/registrations/${registration._id}`, {
+      await axios.delete(`${API_URL}/registrations/${registration._id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
