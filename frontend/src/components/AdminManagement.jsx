@@ -78,7 +78,8 @@ const AdminManagement = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/auth/create-admin', {
+      const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const response = await fetch(`${API_BASE}/auth/create-admin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
