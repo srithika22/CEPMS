@@ -12,9 +12,16 @@ const ScheduledTasks = require('./utils/scheduledTasks');
 
 const app = express();
 const server = createServer(app);
+
+// Get frontend URL and remove trailing slash if present
+const frontendUrl = (process.env.FRONTEND_URL || process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/+$/, '');
+console.log('🌍 CORS Frontend URL:', frontendUrl);
+console.log('🔧 FRONTEND_URL env:', process.env.FRONTEND_URL);
+console.log('🔧 CLIENT_URL env:', process.env.CLIENT_URL);
+
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:5174',
+    origin: frontendUrl,
     methods: ['GET', 'POST']
   }
 });
@@ -38,7 +45,7 @@ if (process.env.NODE_ENV === 'production') {
 // MIDDLEWARE
 // ==========================================
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: frontendUrl,
   credentials: true
 }));
 app.use(express.json());
