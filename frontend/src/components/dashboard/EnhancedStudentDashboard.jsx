@@ -9,6 +9,10 @@ const EnhancedStudentDashboard = () => {
   // API URL from environment variable
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
   
+  // Debug API URL
+  console.log('🔍 Student Dashboard - API_URL:', API_URL);
+  console.log('🔍 Student Dashboard - VITE_API_URL:', import.meta.env.VITE_API_URL);
+  
   const { user } = useAuth();
   const { socket, emitRegistrationCreated } = useSocket();
   const [events, setEvents] = useState([]);
