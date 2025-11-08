@@ -6,6 +6,9 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
 const EnhancedStudentDashboard = () => {
+  // API URL from environment variable
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  
   const { user } = useAuth();
   const { socket, emitRegistrationCreated } = useSocket();
   const [events, setEvents] = useState([]);
@@ -230,7 +233,6 @@ const EnhancedStudentDashboard = () => {
 
       try {
         // Fetch all available events (approved events)
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
         console.log('📡 Student Dashboard - Fetching events from /api/events...');
         const eventsRes = await axios.get(`${API_URL}/events?limit=1000`, config);
         
