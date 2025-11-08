@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: cepms-backend
+    runtime: node
+    plan: free
+    rootDir: ./backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    scaling:
+      minInstances: 1
+      maxInstances: 1
